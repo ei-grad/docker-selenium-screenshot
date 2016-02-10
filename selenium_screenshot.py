@@ -1,4 +1,5 @@
 from threading import Lock
+from os import environ as ENV
 import logging.config
 
 from flask import Flask, request
@@ -12,10 +13,13 @@ logging.basicConfig()
 app = Flask(__name__)
 
 
+Driver = getattr(webdriver, ENV.get("WEBDRIVER", "Chrome"))
+
+
 class Engine():
 
     def __init__(self):
-        self.driver = webdriver.Firefox()
+        self.driver = Driver()
         self.lock = Lock()
 
     def render(self, url):
