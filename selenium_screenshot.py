@@ -1,5 +1,4 @@
-from threading import RLock, local
-from multiprocessing.pool import ThreadPool
+from threading import Lock
 from os import environ as ENV
 import logging.config
 
@@ -17,48 +16,26 @@ app = Flask(__name__)
 Driver = getattr(webdriver, ENV.get("WEBDRIVER", "Firefox"))
 
 
-class RetryFailed(Exception):
-    pass
-
-
 class Engine():
 
     def __init__(self):
         self.driver = Driver()
-        self.lock = RLock()
+        self.lock = Lock()
 
-    def render(self, url, retry=0):
-        if retry > 3:
-            raise RetryFailed()
+    def render(self, url):
         with self.lock:
-            try:
-                self.driver.get(url)
-                return self.driver.get_screenshot_as_png()
-            except:
-                self.driver = Driver()
-                return self.render(url, retry + 1)
+            self.driver.get(url)
+            return self.driver.get_screenshot_as_png()
 
 
-thread_local = local()
-
-
-def thread_init():
-    thread_local.engine = Engine()
-
-
-pool = ThreadPool(int(ENV.get("SCREENSHOT_WORKERS", 4)),
-                  thread_init)
-
-
-def render(url):
-    return thread_local.engine.render(url)
+engine = Engine()
 
 
 @app.route('/')
 def screenshot():
     url = request.args.get('url')
     logging.info("Got request for url: %s", url)
-    return pool.apply(render, (url,)), 200, {
+    return engine.render(url), 200, {
         'Content-Type': 'image/png',
     }
 
