@@ -11,11 +11,13 @@ RUN (echo "deb http://ppa.launchpad.net/no1wantdthisname/ppa/ubuntu trusty main"
     apt-get upgrade -y && \
     apt-get install -y wget python xvfb \
                        fontconfig-infinality \
-                       iceweasel chromium \
+                       iceweasel chromedriver \
                        ttf-dejavu \
                        ttf-mscorefonts-installer && \
     /etc/fonts/infinality/infctl.sh setstyle osx && \
     rm -rf /var/lib/apt/lists/* /var/cache/apt/*
+
+ENV PATH=$PATH:/usr/lib/chromium
 
 RUN wget -O - https://bootstrap.pypa.io/get-pip.py | python
 
