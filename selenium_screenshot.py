@@ -14,7 +14,7 @@ logging.basicConfig()
 app = Flask(__name__)
 
 
-Driver = getattr(webdriver, ENV.get("WEBDRIVER", "Chrome"))
+Driver = getattr(webdriver, ENV.get("WEBDRIVER", "Firefox"))
 
 
 class RetryFailed(Exception):
