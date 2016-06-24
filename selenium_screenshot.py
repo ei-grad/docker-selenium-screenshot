@@ -4,6 +4,8 @@ import logging.config
 
 from flask import Flask, request
 
+from raven.contrib.flask import Sentry
+
 from selenium import webdriver
 
 
@@ -11,6 +13,9 @@ logging.basicConfig()
 
 
 app = Flask(__name__)
+
+if ENV.get("SENTRY_DSN"):
+    sentry = Sentry(app, dsn=ENV['SENTRY_DSN'])
 
 
 Driver = getattr(webdriver, ENV.get("WEBDRIVER", "Firefox"))
