@@ -28,6 +28,8 @@ VOLUME /home/app
 
 CMD ["/usr/src/app/entrypoint.sh"]
 
+ADD 91-no-subpixel.conf /etc/fonts/conf.d
+
 ADD requirements.txt /usr/src/app/requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
